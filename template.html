@@ -2,48 +2,48 @@
 <head></head>
 <body>
   <style>
-    table {
+    #results {
       font-family: "Times New Roman", Times, serif;
       border: 1px solid #FFFFFF;
       text-align: center;
       border-collapse: collapse;
     }
-    table td, table th {
+    #results td, table th {
       border: 1px solid #FFFFFF;
       padding: 3px 2px;
     }
-    table tbody td {
+    #results tbody td {
       font-size: 15px;
     }
-    table tr:nth-child(even) {
+    #results tr:nth-child(even) {
       background: #D0E4F5;
     }
-    table thead {
+    #results thead {
       background: #0B6FA4;
       background: -moz-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
       background: -webkit-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
       background: linear-gradient(to bottom, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
       border-bottom: 5px solid #FFFFFF;
     }
-    table thead th {
+    #results thead th {
       font-size: 17px;
       font-weight: bold;
       color: #FFFFFF;
       text-align: center;
       border-left: 2px solid #FFFFFF;
     }
-    table thead th:first-child {
+    #results thead th:first-child {
       border-left: none;
     }
 
-    table tfoot {
+    #results tfoot {
       font-size: 14px;
       font-weight: bold;
       color: #333333;
       background: #D0E4F5;
       border-top: 3px solid #444444;
     }
-    table tfoot td {
+    #results tfoot td {
       font-size: 14px;
     }
     .highlight {
@@ -52,6 +52,29 @@
       font-weight: bold;
       font-style: italic;
       border: #888 solid 1px;
+    }
+    #hours {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #hours td {
+      border: 1px solid black;
+      padding: 10px;
+      position: relative;
+    }
+
+    #bars {
+      height: 230px;
+    }
+
+    .bar {
+      width: 20px;
+      background-color: blue;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
     }
   </style>
   <div>
@@ -113,6 +136,76 @@
       }
 
       return result
+    }
+
+    const timezones = {
+      "UTC-12:00": "Baker Island",
+      "UTC-11:00": "Niue",
+      "UTC-10:00": "Hawaii-Aleutian",
+      "UTC-09:00": "Alaska",
+      "UTC-08:00": "Pacific US",
+      "UTC-07:00": "Mountain US",
+      "UTC-06:00": "Central US",
+      "UTC-05:00": "Eastern US",
+      "UTC-04:00": "Atlantic US",
+      "UTC-03:00": "Fernando de Noronha",
+      "UTC-02:00": "South Georgia",
+      "UTC-01:00": "Azores",
+      "UTC±00:00": "Greenwich",
+      "UTC+01:00": "Central European",
+      "UTC+02:00": "Eastern European",
+      "UTC+03:00": "Moscow",
+      "UTC+04:00": "Gulf",
+      "UTC+05:00": "Pakistan",
+      "UTC+06:00": "Bangladesh",
+      "UTC+07:00": "Indochina",
+      "UTC+08:00": "China",
+      "UTC+09:00": "Japan",
+      "UTC+10:00": "Australian",
+      "UTC+11:00": "Solomon Islands",
+      "UTC+12:00": "New Zealand",
+    }
+
+    function getSuggestedTimezone(utcHour) {
+      const timezoneNames = [
+        "UTC-12:00", "UTC-11:00", "UTC-10:00", "UTC-09:00", "UTC-08:00", "UTC-07:00",
+        "UTC-06:00", "UTC-05:00", "UTC-04:00", "UTC-03:00", "UTC-02:00", "UTC-01:00",
+        "UTC±00:00", "UTC+01:00", "UTC+02:00", "UTC+03:00", "UTC+04:00", "UTC+05:00",
+        "UTC+06:00", "UTC+07:00", "UTC+08:00", "UTC+09:00", "UTC+10:00", "UTC+11:00"
+      ];
+      const index = (utcHour + 18) % 24;
+      return timezones[timezoneNames[index]];
+    }
+
+    function generateBarGraph(csv) {
+      // Count occurrences of each hour
+      const hourCount = Array(24).fill(0);
+
+      csv.forEach((row) => {
+        if (row === undefined) {
+          return
+        }
+
+        const date = new Date(row[0]);
+        const hour = date.getUTCHours();
+        hourCount[hour]++;
+      });
+
+      const max = Math.max(...hourCount)
+
+      console.log(hourCount)
+      // Generate the bar graph table
+      let table = "<h3>Posting Times</h3><table id=\"hours\"><tr id=\"bars\">";
+      for (let i = 0; i < 24; i++) {
+        table += `<td><div class="bar" style="height:${hourCount[i] / max * 200}px; background: blue;"></div></td>`;
+      }
+      table += "</tr><tr>";
+      for (let i = 0; i < 24; i++) {
+        table += `<td><center>${i}:00 UTC<div><b>${getSuggestedTimezone(i)}</b></div></center></td>`;
+      }
+      table += "</tr></table>";
+
+      return table;
     }
 
     const wordIndex = createIndex(csv)
@@ -227,6 +320,9 @@
         performSearch(value)
       }, 300)
     }
+
+    const barGraphTable = generateBarGraph(csv);
+    document.body.innerHTML += barGraphTable
   </script>
 </body>
 </html>
