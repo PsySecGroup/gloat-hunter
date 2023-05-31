@@ -55,7 +55,12 @@
     }
   </style>
   <div>
-    <p>Please separate each search phrase with OR to search for multiple phrases at the same time</p>
+    <p>Query Options</p>
+    <ul>
+      <li><b>basket</b> finds anything that starts with "basket" (Like "<b>basket</b>ball and <b>basket</b>weaving)</li>
+      <li><b>basket or glove</b> will find anything that starts "basket" or "glove"</li>
+      <li><b>"basket"</b> (with quotes) will only find anything that is the word "basket"</li>
+    </ul>
     <input id="search" type="text" placeholder="Search here..."/>
     <table id="results"></table>
   </div>
@@ -74,6 +79,7 @@
     })
 
     let searchTimeout
+    const quotes = /'|"/g
     const removeUsers = /\@[^\s\n]+/g
     const removeHash = /\#[^\s\n]+/g
 
@@ -132,11 +138,19 @@
       const candidates = []
 
       const words = value.trim().toLowerCase().split(/ OR /ig)
-      const queryRegex = new RegExp(words.join('|'), 'gi')
-      
+      const queryRegex = new RegExp(words.join('|').replace(quotes, ''), 'gi')
+
       for (query of words) {
+        const withoutQuotes = query.replace(quotes, '')
         const indexMatches = wordIndexKeys
-          .filter(key => key.includes(query))
+          .filter(key => {
+            if (query[0] === '"' || query[0] === `'`) {
+              return key === withoutQuotes
+            } else {
+              return key.indexOf(query) === 0  
+            }
+            
+          })
           .map(key => wordIndex[key])
 
         const tweetIds = [...new Set(indexMatches.flat())]; 
@@ -147,17 +161,21 @@
           if (tweet === undefined) {
             continue
           }
-          console.log(queryRegex)
+
+          const strippedWords = words.map(word => word.replace(quotes, ''))
           candidates.push([
             tweet[0],
             tweet[1]
               .replace(removeUsers, '')
               .replace(removeHash, '')
               .replace(queryRegex, match => {
-                const index = words.indexOf(match);
+                const index = strippedWords.indexOf(match);
+                console.log({
+                  queryRegex, match, strippedWords, index
+                })
 
                 if (index >= 0) {
-                  return `<span class="highlight">${words[index]}</span>`;
+                  return `<span class="highlight">${strippedWords[index]}</span>`;
                 }
 
                 return match;                
