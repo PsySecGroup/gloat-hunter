@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Gather tweets
+if [ ! -e "gather-tweets" ]; then
+    # Check if curl is installed
+    if command -v curl &> /dev/null; then
+        curl -s -O https://raw.githubusercontent.com/PsySecGroup/gather-tweets/main/gather-tweets
+    # Check if wget is installed
+    elif command -v wget &> /dev/null; then
+        wget -q https://raw.githubusercontent.com/PsySecGroup/gather-tweets/main/gather-tweets
+    else
+        echo "Neither curl nor wget found. Please install either of them."
+    fi
+fi
+
+#./gather-tweets $1
+#mv $1 targets/
+
+# Convert everything to an acceptable format
+awk -F'\t' 'NR>1 { gsub(/[-:]/, " ", $3); t = mktime($3 " 00"); tweet = $11; sub("\t.*", "", tweet); print strftime("%Y-%m-%dT%H:%M:%SZ\t", t), tweet }' targets/$1.csv > targets/$1.txt
+
+# Strips all mentions and starting spaces from the output text
+sed -i -E 's/@[^[:space:]]*//g; s/\t[[:space:]]*/\t/g' targets/$1.txt
+
+# Geneates the GUI
+sed -e "/{{replaceMe}}/r targets/$1.txt" -e '/{{replaceMe}}/d' template.html > targets/$1.html
+
+# Open the GUI
+if command -v xdg-open &> /dev/null; then
+    xdg-open targets/$1.html
+elif command -v open &> /dev/null; then 
+    open targets/$1.html
+elif command -v start &> /dev/null; then
+    start targets/$1.html
+fi
+
+# Uploads the HTML to Keep.sh and gives you a link to share with fellow researchers
+echo "Share this link with fellow researchers so they can help! (This link will self-terminate in 24 hours)"
+LINK=$(curl -s --upload-file targets/$1.html https://free.keep.sh)
+HASH=$(echo "$url" | grep -oP "(?<=/)[^/]+(?=/)")
+
+# Creates a Jitsi link to conduct research
+echo ""
+echo "Share this link to invite people for collaborative research!"
+echo "https://meet.jit.si/$1-$HASH"

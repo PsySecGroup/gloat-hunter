@@ -1,0 +1,166 @@
+<html>
+<head></head>
+<body>
+	<style>
+		table {
+		  font-family: "Times New Roman", Times, serif;
+		  border: 1px solid #FFFFFF;
+		  text-align: center;
+		  border-collapse: collapse;
+		}
+		table td, table th {
+		  border: 1px solid #FFFFFF;
+		  padding: 3px 2px;
+		}
+		table tbody td {
+		  font-size: 15px;
+		}
+		table tr:nth-child(even) {
+		  background: #D0E4F5;
+		}
+		table thead {
+		  background: #0B6FA4;
+		  background: -moz-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
+		  background: -webkit-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
+		  background: linear-gradient(to bottom, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
+		  border-bottom: 5px solid #FFFFFF;
+		}
+		table thead th {
+		  font-size: 17px;
+		  font-weight: bold;
+		  color: #FFFFFF;
+		  text-align: center;
+		  border-left: 2px solid #FFFFFF;
+		}
+		table thead th:first-child {
+		  border-left: none;
+		}
+
+		table tfoot {
+		  font-size: 14px;
+		  font-weight: bold;
+		  color: #333333;
+		  background: #D0E4F5;
+		  border-top: 3px solid #444444;
+		}
+		table tfoot td {
+		  font-size: 14px;
+		}
+	</style>
+	<div>
+		<input id="search" type="text" placeholder="Search here..."/>
+		<table id="results"></table>
+	</div>
+	<script>
+		const csv = `
+{{replaceMe}}
+		`.split('\n').map(line => {
+			const parts = line.split('\t')
+			//return [new Date(parts[0]), line.substring(25).trim().toLowerCase().split(' ')]
+			return [new Date(parts[0]), line.substring(25).trim().toLowerCase()]
+		})
+/*
+		const uniqueWords = {}
+
+		csv.forEach(entry => {
+			entry[1].forEach(word => {
+				if (word[0] === '@' || word[0] === '#') {
+					return
+				}
+
+				if (uniqueWords[word] === undefined) {
+					uniqueWords[word] = 0
+				}
+
+				uniqueWords[word] += 1
+			})
+		})
+
+		const uniqueWordEntries = Object.entries(uniqueWords)
+		const sortedUniqueWords = uniqueWordEntries.sort((a, b) => a[1] - b[1]).reverse()
+		const longestWords = sortedUniqueWords.filter(word => word[0].length > 7)
+*/
+		let searchTimeout
+		const removeUsers = /\@[^\s\n]+/g
+		const removeHash = /\#[^\s\n]+/g
+
+		/**
+		 * 
+		 */
+		function performSearch (value) {
+			if (value === '') {
+				return
+			}
+
+			searchResults.innerHTML = ``
+
+			const candidates = []
+			
+			for (entry of csv) {
+				const words = entry[1] || ''
+				let index = -1
+
+				/*
+				words.forEach(word => {
+					index += 1
+
+					if (word[0] === '@' || word[0] === '#') {
+						return
+					}
+				*/
+					if (words.indexOf(value) > -1) {
+						candidates.push([
+							entry[0],
+							words
+								.replace(value, `<b>${value}</b>`)
+								.replace(removeUsers, '')
+								.replace(removeHash, '')
+						])
+					}
+				//})
+			}
+
+			candidates.sort((a, b) => a[0] - b[0])
+			let result = ``
+			for (const candidate of candidates) {
+				result += `<tr>
+				<td>${candidate[0].getFullYear()}</td>
+				<td>${candidate[0].getMonth() + 1}</td>
+				<td>${candidate[0].getDate()}</td>
+				<td>${candidate[0].toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</td>
+				<td>${candidate[1]}</td>
+			</tr>`
+			}
+
+			searchResults.innerHTML = `<thead><tr>
+				<td>Year</td>
+				<td>Month</td>
+				<td>Day</td>
+				<td>Time</td>
+				<td>Text</td>
+			</tr></thead><tbody>${result}</tbody>`
+		}
+
+		const searchInput = document.getElementById('search')
+		const searchResults = document.getElementById('results')
+		
+		/**
+		 * 
+		 */
+		searchInput.onkeyup = function search (e) {
+			const value = e.target.value.toLowerCase()
+			if (value === '') {
+				return
+			}
+
+			if (searchTimeout) {
+				clearTimeout(searchTimeout)
+			}
+
+			searchTimeout = setTimeout(() => {
+				performSearch(value)
+			}, 300)
+		}
+	</script>
+</body>
+</html>
