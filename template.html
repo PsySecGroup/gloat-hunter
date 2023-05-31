@@ -1,166 +1,214 @@
 <html>
 <head></head>
 <body>
-	<style>
-		table {
-		  font-family: "Times New Roman", Times, serif;
-		  border: 1px solid #FFFFFF;
-		  text-align: center;
-		  border-collapse: collapse;
-		}
-		table td, table th {
-		  border: 1px solid #FFFFFF;
-		  padding: 3px 2px;
-		}
-		table tbody td {
-		  font-size: 15px;
-		}
-		table tr:nth-child(even) {
-		  background: #D0E4F5;
-		}
-		table thead {
-		  background: #0B6FA4;
-		  background: -moz-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
-		  background: -webkit-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
-		  background: linear-gradient(to bottom, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
-		  border-bottom: 5px solid #FFFFFF;
-		}
-		table thead th {
-		  font-size: 17px;
-		  font-weight: bold;
-		  color: #FFFFFF;
-		  text-align: center;
-		  border-left: 2px solid #FFFFFF;
-		}
-		table thead th:first-child {
-		  border-left: none;
-		}
+  <style>
+    table {
+      font-family: "Times New Roman", Times, serif;
+      border: 1px solid #FFFFFF;
+      text-align: center;
+      border-collapse: collapse;
+    }
+    table td, table th {
+      border: 1px solid #FFFFFF;
+      padding: 3px 2px;
+    }
+    table tbody td {
+      font-size: 15px;
+    }
+    table tr:nth-child(even) {
+      background: #D0E4F5;
+    }
+    table thead {
+      background: #0B6FA4;
+      background: -moz-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
+      background: -webkit-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
+      background: linear-gradient(to bottom, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
+      border-bottom: 5px solid #FFFFFF;
+    }
+    table thead th {
+      font-size: 17px;
+      font-weight: bold;
+      color: #FFFFFF;
+      text-align: center;
+      border-left: 2px solid #FFFFFF;
+    }
+    table thead th:first-child {
+      border-left: none;
+    }
 
-		table tfoot {
-		  font-size: 14px;
-		  font-weight: bold;
-		  color: #333333;
-		  background: #D0E4F5;
-		  border-top: 3px solid #444444;
-		}
-		table tfoot td {
-		  font-size: 14px;
-		}
-	</style>
-	<div>
-		<input id="search" type="text" placeholder="Search here..."/>
-		<table id="results"></table>
-	</div>
-	<script>
-		const csv = `
+    table tfoot {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333333;
+      background: #D0E4F5;
+      border-top: 3px solid #444444;
+    }
+    table tfoot td {
+      font-size: 14px;
+    }
+    .highlight {
+      padding: 3px;
+      background: yellow;
+      font-weight: bold;
+      font-style: italic;
+      border: #888 solid 1px;
+    }
+  </style>
+  <div>
+    <p>Please separate each search phrase with OR to search for multiple phrases at the same time</p>
+    <input id="search" type="text" placeholder="Search here..."/>
+    <table id="results"></table>
+  </div>
+  <script>
+    // Create CSV array
+    const csv = `
 {{replaceMe}}
-		`.split('\n').map(line => {
-			const parts = line.split('\t')
-			//return [new Date(parts[0]), line.substring(25).trim().toLowerCase().split(' ')]
-			return [new Date(parts[0]), line.substring(25).trim().toLowerCase()]
-		})
-/*
-		const uniqueWords = {}
+    `.split('\n').map(line => {
+      line = line.trim()
+      if (line === '') {
+        return
+      }
 
-		csv.forEach(entry => {
-			entry[1].forEach(word => {
-				if (word[0] === '@' || word[0] === '#') {
-					return
-				}
+      const parts = line.split('\t')
+      return [new Date(parts[0]), parts[1].toLowerCase()]
+    })
 
-				if (uniqueWords[word] === undefined) {
-					uniqueWords[word] = 0
-				}
+    let searchTimeout
+    const removeUsers = /\@[^\s\n]+/g
+    const removeHash = /\#[^\s\n]+/g
 
-				uniqueWords[word] += 1
-			})
-		})
+    /**
+     * 
+     */
+    function createIndex (csv) {
+      const result = {}
+      let i = 0
 
-		const uniqueWordEntries = Object.entries(uniqueWords)
-		const sortedUniqueWords = uniqueWordEntries.sort((a, b) => a[1] - b[1]).reverse()
-		const longestWords = sortedUniqueWords.filter(word => word[0].length > 7)
-*/
-		let searchTimeout
-		const removeUsers = /\@[^\s\n]+/g
-		const removeHash = /\#[^\s\n]+/g
+      for (const tweet of csv) {
+        if (tweet === undefined) {
+          i += 1
+          continue
+        }
+        const words = tweet[1].split(/\b/)
 
-		/**
-		 * 
-		 */
-		function performSearch (value) {
-			if (value === '') {
-				return
-			}
+        // Iterate through each word
+        words.forEach(word => {
+          if (word.trim() !== '') {
+            // Check if word already exists in the index
+            if (result[word]) {
+              result[word].push(i);
+            } else {
+              result[word] = [i];
+            }
+          }
+        });
 
-			searchResults.innerHTML = ``
+        i += 1
+      }
 
-			const candidates = []
-			
-			for (entry of csv) {
-				const words = entry[1] || ''
-				let index = -1
+      return result
+    }
 
-				/*
-				words.forEach(word => {
-					index += 1
+    const wordIndex = createIndex(csv)
+    const wordIndexKeys = Object.keys(wordIndex)
 
-					if (word[0] === '@' || word[0] === '#') {
-						return
-					}
-				*/
-					if (words.indexOf(value) > -1) {
-						candidates.push([
-							entry[0],
-							words
-								.replace(value, `<b>${value}</b>`)
-								.replace(removeUsers, '')
-								.replace(removeHash, '')
-						])
-					}
-				//})
-			}
+    function replaceWithRegex(inputString, regexPattern, words) {
+      return inputString.replace(regexPattern, (match) => {
+        //const words = regexPattern.split('|');
 
-			candidates.sort((a, b) => a[0] - b[0])
-			let result = ``
-			for (const candidate of candidates) {
-				result += `<tr>
-				<td>${candidate[0].getFullYear()}</td>
-				<td>${candidate[0].getMonth() + 1}</td>
-				<td>${candidate[0].getDate()}</td>
-				<td>${candidate[0].toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</td>
-				<td>${candidate[1]}</td>
-			</tr>`
-			}
+      });
+    }
 
-			searchResults.innerHTML = `<thead><tr>
-				<td>Year</td>
-				<td>Month</td>
-				<td>Day</td>
-				<td>Time</td>
-				<td>Text</td>
-			</tr></thead><tbody>${result}</tbody>`
-		}
+    /**
+     * 
+     */
+    function performSearch (value) {
+      if (value === '') {
+        return
+      }
 
-		const searchInput = document.getElementById('search')
-		const searchResults = document.getElementById('results')
-		
-		/**
-		 * 
-		 */
-		searchInput.onkeyup = function search (e) {
-			const value = e.target.value.toLowerCase()
-			if (value === '') {
-				return
-			}
+      searchResults.innerHTML = ``
 
-			if (searchTimeout) {
-				clearTimeout(searchTimeout)
-			}
+      const candidates = []
 
-			searchTimeout = setTimeout(() => {
-				performSearch(value)
-			}, 300)
-		}
-	</script>
+      const words = value.trim().toLowerCase().split(/ OR /ig)
+      const queryRegex = new RegExp(words.join('|'), 'gi')
+      
+      for (query of words) {
+        const indexMatches = wordIndexKeys
+          .filter(key => key.includes(query))
+          .map(key => wordIndex[key])
+
+        const tweetIds = [...new Set(indexMatches.flat())]; 
+
+        for (const tweetId of tweetIds) {
+          const tweet = csv[tweetId]
+
+          if (tweet === undefined) {
+            continue
+          }
+          console.log(queryRegex)
+          candidates.push([
+            tweet[0],
+            tweet[1]
+              .replace(removeUsers, '')
+              .replace(removeHash, '')
+              .replace(queryRegex, match => {
+                const index = words.indexOf(match);
+
+                if (index >= 0) {
+                  return `<span class="highlight">${words[index]}</span>`;
+                }
+
+                return match;                
+              })
+          ])  
+        }
+      }
+
+      candidates.sort((a, b) => a[0] - b[0])
+
+      let result = ``
+      for (const candidate of candidates) {
+        result += `<tr>
+        <td>${candidate[0].getFullYear()}</td>
+        <td>${candidate[0].getMonth() + 1}</td>
+        <td>${candidate[0].getDate()}</td>
+        <td>${candidate[0].toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</td>
+        <td>${candidate[1]}</td>
+      </tr>`
+      }
+
+      searchResults.innerHTML = `<thead><tr>
+        <td>Year</td>
+        <td>Month</td>
+        <td>Day</td>
+        <td>Time</td>
+        <td>Text</td>
+      </tr></thead><tbody>${result}</tbody>`
+    }
+
+
+    /**
+     * Conduct search with each character change
+     */
+    const searchInput = document.getElementById('search')
+    const searchResults = document.getElementById('results')
+
+    searchInput.onkeyup = function search (e) {
+      const value = e.target.value.toLowerCase()
+      if (value === '') {
+        return
+      }
+
+      if (searchTimeout) {
+        clearTimeout(searchTimeout)
+      }
+
+      searchTimeout = setTimeout(() => {
+        performSearch(value)
+      }, 300)
+    }
+  </script>
 </body>
 </html>

@@ -9,14 +9,21 @@ Gloat Hunter does the following:
 * Provides a link of the self-contained GUI for other researchers to download
 * Creates a Jitsi link for people to conduct collaborative research at
 
-# Install
+## Requires
+
+* Python
+* Unix-like standards (awk, grep, gsub, sed, mktime, print, strftime, echo, comamnd)
+* curl/wget
+* xdg-open/open/start
+
+## Install
 
 ```bash
 git clone https://github.com/PsySecGroup/gloat-hunter.git
 cd gloat-hunter
 ```
 
-# Usage
+## Usage
 
 To use `hunt-gloats`, simply replace `elonmusk` with another Twitter account name and a browser will open up with a GUI for target analysis.
 
