@@ -5,6 +5,7 @@ Everyone be self-snitching these days. Here's a tool that makes gloat-based OSIN
 Gloat Hunter does the following:
 * Gathers the last 3,200 tweets of a target
 * Generates a stand-alone self-contained GUI to conduct offline searches of the targets tweet history
+* Supports queries with OR to search for multiple phrases at the same time
 * Provides a list of common queries to assist with common investigative tasks (Coming soon!)
 * Provides a link of the self-contained GUI for other researchers to download
 * Creates a Jitsi link for people to conduct collaborative research at
