@@ -28,6 +28,9 @@ sed -i -E 's/@[^[:space:]]*//g; s/`//g; s/\t[[:space:]]*/\t/g' targets/$1.txt
 # Geneates the GUI
 sed -e "/{{replaceMe}}/r targets/$1.txt" -e '/{{replaceMe}}/d' template.html > targets/$1.html
 
+# Geneates the Chat Button
+sed -i "s|href=\"{{jitsi}}\"|href=\"https://meet.jit.si/gloat-hunting-$1\"|g" targets/$1.html
+
 # Open the GUI
 if command -v xdg-open &> /dev/null; then
     xdg-open targets/$1.html
@@ -45,4 +48,4 @@ HASH=$(echo "$url" | grep -oP "(?<=/)[^/]+(?=/)")
 # Creates a Jitsi link to conduct research
 echo ""
 echo "Share this link to invite people for collaborative research!"
-echo "https://meet.jit.si/$1-$HASH"
+echo "https://meet.jit.si/gloat-hunting-$1"

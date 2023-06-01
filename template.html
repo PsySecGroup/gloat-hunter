@@ -76,9 +76,39 @@
       left: 50%;
       transform: translateX(-50%);
     }
+    
+    .button {
+      margin-top: 1em;
+      padding: 1em;
+      font-size:15px;
+      font-family:Arial;
+      width:140px;
+      height:50px;
+      border-width:1px;
+      color:#fff;
+      border-color:#4e6096;
+      border-top-left-radius:10px;
+      border-top-right-radius:10px;
+      border-bottom-left-radius:10px;
+      border-bottom-right-radius:10px;
+      box-shadow: 0px 0px 0px 2px #9fb4f2;
+      text-shadow: 0px 1px 0px #283966;
+      background:linear-gradient(rgb(120, 146, 194), #476e9e);
+    }
+
+    .button:hover {
+      background: linear-gradient(#476e9e, rgb(120, 146, 194));
+    }
   </style>
   <div>
-    <p>Query Options</p>
+    <br/>
+    <a
+href="{{jitsi}}"
+    target="_blank" class="button">Join Group Chat</a>
+    <br/><br/>
+  </div>
+  <div>
+    <h3>Query Options</h3>
     <ul>
       <li><b>basket</b> finds anything that starts with "basket" (Like "<b>basket</b>ball and <b>basket</b>weaving)</li>
       <li><b>basket or glove</b> will find anything that starts "basket" or "glove"</li>
