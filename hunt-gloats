@@ -13,8 +13,11 @@ if [ ! -e "gather-tweets" ]; then
     fi
 fi
 
-./gather-tweets $1
-mv $1.csv targets/
+# A second argument in the CLI will prevent a tweet gather
+if [ ! $2 ]; then
+  ./gather-tweets $1
+  mv $1.csv targets/
+fi
 
 # Convert everything to an acceptable format
 awk -F'\t' 'NR>1 { gsub(/[-:]/, " ", $3); t = mktime($3 " 00"); tweet = $11; sub("\t.*", "", tweet); print strftime("%Y-%m-%dT%H:%M:%SZ\t", t), tweet }' targets/$1.csv > targets/$1.txt

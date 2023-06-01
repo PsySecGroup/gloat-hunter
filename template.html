@@ -177,6 +177,10 @@
       return timezones[timezoneNames[index]];
     }
 
+    function getTimeText(time) {
+      return `${time.getMonth() + 1}/${time.getDate()}/${time.getFullYear()}`
+    }
+
     function generateBarGraph(csv) {
       // Count occurrences of each hour
       const hourCount = Array(24).fill(0);
@@ -192,9 +196,13 @@
       });
 
       const max = Math.max(...hourCount)
+      console.log(csv)
+
+      const end = (csv[0] || csv[1])[0] || new Date(0)
+      const start = (csv[csv.length - 1] || csv[csv.length - 2])[0] || new Date()
 
       // Generate the bar graph table
-      let table = "<h3>Posting Times</h3><table id=\"hours\"><tr id=\"bars\">";
+      let table = `<h3>Posting Times between ${getTimeText(start)} and ${getTimeText(end)}</h3><p>This shows the frequency of posts, grouped by each hour of the day.  The bar with the smallest value is the physical location on earth they are likely to be at.  This is because people do not tweet when they sleep, and so the least amount of tweets at that hour is when they sleep, and when they sleep is also where they sleep.</p><table id=\"hours\"><tr id=\"bars\">`;
       for (let i = 0; i < 24; i++) {
         table += `<td><div class="bar" style="height:${hourCount[i] / max * 200}px; background: blue;"></div></td>`;
       }
