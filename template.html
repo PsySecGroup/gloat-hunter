@@ -98,7 +98,7 @@
       }
 
       const parts = line.split('\t')
-      return [new Date(parts[0]), parts[1].toLowerCase()]
+      return [new Date(parts[0]), (parts[1] || '').toLowerCase()]
     })
 
     let searchTimeout
@@ -193,7 +193,6 @@
 
       const max = Math.max(...hourCount)
 
-      console.log(hourCount)
       // Generate the bar graph table
       let table = "<h3>Posting Times</h3><table id=\"hours\"><tr id=\"bars\">";
       for (let i = 0; i < 24; i++) {
@@ -263,9 +262,6 @@
               .replace(removeHash, '')
               .replace(queryRegex, match => {
                 const index = strippedWords.indexOf(match);
-                console.log({
-                  queryRegex, match, strippedWords, index
-                })
 
                 if (index >= 0) {
                   return `<span class="highlight">${strippedWords[index]}</span>`;
@@ -299,6 +295,8 @@
       </tr></thead><tbody>${result}</tbody>`
     }
 
+    const barGraphTable = generateBarGraph(csv);
+    document.body.innerHTML += barGraphTable
 
     /**
      * Conduct search with each character change
@@ -320,9 +318,6 @@
         performSearch(value)
       }, 300)
     }
-
-    const barGraphTable = generateBarGraph(csv);
-    document.body.innerHTML += barGraphTable
   </script>
 </body>
 </html>
