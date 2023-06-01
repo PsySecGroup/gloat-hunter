@@ -2,13 +2,25 @@
 
 Everyone be self-snitching these days. Here's a tool that makes gloat-based OSINT easier to find.
 
-Gloat Hunter does the following:
+![image](https://github.com/PsySecGroup/gloat-hunter/assets/76200774/8221c58e-d86b-4d15-9266-217630be8e00)
+
+![image](https://github.com/PsySecGroup/gloat-hunter/assets/76200774/cd01770e-4b13-4e2e-b01c-b6f7a1c31ae7)
+
+![image](https://github.com/PsySecGroup/gloat-hunter/assets/76200774/afa933a6-511a-4a1e-a8b2-36f62233c6d4)
+
+## Features
+
 * Gathers the last 3,200 tweets of a target
-* Generates a stand-alone self-contained GUI to conduct offline searches of the targets tweet history
+* Generates a standalone self-contained GUI to conduct offline searches of the targets tweet history
 * Supports queries with OR to search for multiple phrases at the same time
-* Provides a list of common queries to assist with common investigative tasks (Coming soon!)
-* Provides a link of the self-contained GUI for other researchers to download
+* Supports queries with quotes for exact match searching
 * Creates a Jitsi link for people to conduct collaborative research at
+
+### Coming Soon
+
+* Provides a list of common queries to assist with common investigative tasks
+* Generates a link for others to download the GUI
+* Bounty System
 
 ## Requires
 
