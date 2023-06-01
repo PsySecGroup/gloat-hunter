@@ -2,15 +2,27 @@
 <head></head>
 <body>
   <style>
+    html, body {
+      margin: 0;
+      font-family:  Arial;
+    }
+    .vTop {
+      vertical-align: top;
+    }
+    .smallText {
+      font-size: 11px;
+    }
+    .primaryBackground {
+      background:linear-gradient(rgb(120, 146, 194), #476e9e);
+    }
     #results {
-      font-family: "Times New Roman", Times, serif;
       border: 1px solid #FFFFFF;
       text-align: center;
       border-collapse: collapse;
     }
     #results td, table th {
       border: 1px solid #FFFFFF;
-      padding: 3px 2px;
+      padding:  1em;
     }
     #results tbody td {
       font-size: 15px;
@@ -19,23 +31,19 @@
       background: #D0E4F5;
     }
     #results thead {
-      background: #0B6FA4;
-      background: -moz-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
-      background: -webkit-linear-gradient(top, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
-      background: linear-gradient(to bottom, #4893bb 0%, #237dad 66%, #0B6FA4 100%);
+      background:linear-gradient(rgb(120, 146, 194), #476e9e);
       border-bottom: 5px solid #FFFFFF;
     }
     #results thead th {
-      font-size: 17px;
+      font-size: 25px;
       font-weight: bold;
       color: #FFFFFF;
       text-align: center;
-      border-left: 2px solid #FFFFFF;
+      border-left: 2px solid #FFFFFF;: 1em;
     }
     #results thead th:first-child {
       border-left: none;
     }
-
     #results tfoot {
       font-size: 14px;
       font-weight: bold;
@@ -53,13 +61,15 @@
       font-style: italic;
       border: #888 solid 1px;
     }
+
     #hours {
       width: 100%;
       border-collapse: collapse;
+      border: 1px solid black;
     }
 
     #hours td {
-      border: 1px solid black;
+      border: 0px solid black;
       padding: 10px;
       position: relative;
     }
@@ -70,7 +80,7 @@
 
     .bar {
       width: 20px;
-      background-color: blue;
+      background-color: #D45F5F;
       position: absolute;
       bottom: 0;
       left: 50%;
@@ -94,30 +104,106 @@
       box-shadow: 0px 0px 0px 2px #9fb4f2;
       text-shadow: 0px 1px 0px #283966;
       background:linear-gradient(rgb(120, 146, 194), #476e9e);
+      text-decoration: none;
     }
 
     .button:hover {
       background: linear-gradient(#476e9e, rgb(120, 146, 194));
     }
+
+    .tabs {
+      justify-content: center;
+      display: flex;
+      width: 100%;
+      margin: 0;
+      background-color: #FBEBD2;
+    }
+
+    .tab {
+      padding: 0px 20px;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      border-bottom: orange solid 5px;
+    }
+
+    .tab-content {
+      text-align: -webkit-center;
+      display: none;
+      padding: 20px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    #search {
+      font-size: 1.5em;
+      padding: 10px;
+    }
+
+    /* Tooltip container */
+    #queryHelp {
+      background-color: #FBEBD2;
+      text-align: left;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      padding:  1em;
+      border: 1px solid #000;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #queryHelp.visible {
+      opacity: 1;
+    }
   </style>
   <div>
-    <br/>
-    <a
-href="{{jitsi}}"
-    target="_blank" class="button">Join Group Chat</a>
-    <br/><br/>
+    <div class="tabs">
+      <div class="tab active" onclick="changeTab(0)"><h4>Offline Search</h4></div>
+      <div class="tab" onclick="changeTab(1)"><h4>Sleep Analysis</h4></div>
+      <div class="tab" onclick="changeTab(2)"><h4>Group Chat</h4></div>
+    </div>
+    <div class="tab-content active">
+      <input id="search" type="text" placeholder="Search here..."/>
+      <a href="#" class="button" id="queryHelpButton">
+        ?
+      </a>
+      <div id="queryHelp">
+        <h3>Query Options</h3>
+        <ul>
+          <li><b>basket</b> finds anything that starts with 'basket' (Like '<b>basket</b>ball and <b>basket</b>weaving)</li>
+          <li><b>basket or glove</b> will find anything that starts 'basket' or 'glove'</li>
+          <li><b>'basket'</b> (with quotes) will only find anything that is the word 'basket'</li>
+        </ul>
+      </div>
+      <br/><br/>
+      <table id="results"></table>
+    </div>
+    <div class="tab-content" id="sleepAnalysis"></div>
+    <div class="tab-content" id="jitsi">
+      <span id="loadingJitsi">Loading...</span>
+    </div>
   </div>
   <div>
-    <h3>Query Options</h3>
-    <ul>
-      <li><b>basket</b> finds anything that starts with "basket" (Like "<b>basket</b>ball and <b>basket</b>weaving)</li>
-      <li><b>basket or glove</b> will find anything that starts "basket" or "glove"</li>
-      <li><b>"basket"</b> (with quotes) will only find anything that is the word "basket"</li>
-    </ul>
-    <input id="search" type="text" placeholder="Search here..."/>
-    <table id="results"></table>
   </div>
   <script>
+    let api
+    const domain = 'meet.jit.si';
+    const options = {
+roomName: '{{jitsi}}',
+      width: '50%',
+      height: '50%',
+      parentNode: document.querySelector('#jitsi'),
+      lang: 'en'
+    };
+
     // Create CSV array
     const csv = `
 {{replaceMe}}
@@ -135,6 +221,17 @@ href="{{jitsi}}"
     const quotes = /'|"/g
     const removeUsers = /\@[^\s\n]+/g
     const removeHash = /\#[^\s\n]+/g
+
+    const queryHelpButton = document.getElementById('queryHelpButton');
+    const queryHelp = document.getElementById('queryHelp');
+
+    queryHelpButton.addEventListener('mouseover', () => {
+      queryHelp.classList.add('visible');
+    });
+
+    queryHelpButton.addEventListener('mouseout', () => {
+      queryHelp.classList.remove('visible');
+    });
 
     /**
      * 
@@ -196,6 +293,58 @@ href="{{jitsi}}"
       "UTC+12:00": "New Zealand",
     }
 
+    /**
+     * 
+     */
+    function loadScript(url, callback) {
+      var script = document.createElement('script');
+      script.src = url;
+
+      // Execute the callback function after the script is loaded
+      script.onload = callback;
+
+      // Append the script element to the document
+      document.head.appendChild(script);
+    }
+
+    /**
+     * 
+     */
+    function changeTab(tabIndex) {
+      var tabs = document.getElementsByClassName("tab");
+      var tabContents = document.getElementsByClassName("tab-content");
+
+      // Remove "active" class from all tabs and tab contents
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove("active");
+        tabContents[i].classList.remove("active");
+      }
+
+      // Add "active" class to the clicked tab and corresponding tab content
+      tabs[tabIndex].classList.add("active");
+      tabContents[tabIndex].classList.add("active");
+
+      if (tabIndex === 2) {
+        loadGroupChat()
+      }
+    }
+
+
+    /**
+     * 
+     */
+    function loadGroupChat() {
+      if (api === undefined) {
+        loadScript('https://meet.jit.si/external_api.js', () => {
+          api = new JitsiMeetExternalAPI(domain, options);
+          document.getElementById('loadingJitsi').remove()
+        })
+      }
+    }
+
+    /**
+     * 
+     */
     function getSuggestedTimezone(utcHour) {
       const timezoneNames = [
         "UTC-12:00", "UTC-11:00", "UTC-10:00", "UTC-09:00", "UTC-08:00", "UTC-07:00",
@@ -207,10 +356,16 @@ href="{{jitsi}}"
       return timezones[timezoneNames[index]];
     }
 
+    /**
+     * 
+     */
     function getTimeText(time) {
       return `${time.getMonth() + 1}/${time.getDate()}/${time.getFullYear()}`
     }
 
+    /**
+     * 
+     */
     function generateBarGraph(csv) {
       // Count occurrences of each hour
       const hourCount = Array(24).fill(0);
@@ -226,19 +381,18 @@ href="{{jitsi}}"
       });
 
       const max = Math.max(...hourCount)
-      console.log(csv)
 
       const end = (csv[0] || csv[1])[0] || new Date(0)
       const start = (csv[csv.length - 1] || csv[csv.length - 2])[0] || new Date()
 
       // Generate the bar graph table
-      let table = `<h3>Posting Times between ${getTimeText(start)} and ${getTimeText(end)}</h3><p>This shows the frequency of posts, grouped by each hour of the day.  The bar with the smallest value is the physical location on earth they are likely to be at.  This is because people do not tweet when they sleep, and so the least amount of tweets at that hour is when they sleep, and when they sleep is also where they sleep.</p><table id=\"hours\"><tr id=\"bars\">`;
+      let table = `<h3>Posting Times between ${getTimeText(start)} and ${getTimeText(end)}</h3><p>This shows the frequency of posts, grouped by each hour of the day.<br />The bar with the smallest value is the physical location on earth they are likely to be at.<br />This is because people do not tweet when they sleep, and so the least amount of tweets at that hour is when they sleep, and when they sleep is also where they sleep.</p><table id=\"hours\"><tr id=\"bars\">`;
       for (let i = 0; i < 24; i++) {
-        table += `<td><div class="bar" style="height:${hourCount[i] / max * 200}px; background: blue;"></div></td>`;
+        table += `<td><div class="bar" style="height:${hourCount[i] / max * 200}px;"></div></td>`;
       }
       table += "</tr><tr>";
       for (let i = 0; i < 24; i++) {
-        table += `<td><center>${i}:00 UTC<div><b>${getSuggestedTimezone(i)}</b></div></center></td>`;
+        table += `<td class="primaryBackground smallText vTop"><center>${i}:00<br/>UTC<div><br/><b>${getSuggestedTimezone(i)}</b></div></center></td>`;
       }
       table += "</tr></table>";
 
@@ -248,6 +402,9 @@ href="{{jitsi}}"
     const wordIndex = createIndex(csv)
     const wordIndexKeys = Object.keys(wordIndex)
 
+    /**
+     * 
+     */
     function replaceWithRegex(inputString, regexPattern, words) {
       return inputString.replace(regexPattern, (match) => {
         //const words = regexPattern.split('|');
@@ -333,8 +490,9 @@ href="{{jitsi}}"
       </tr></thead><tbody>${result}</tbody>`
     }
 
+    const sleepAnalysis = document.getElementById('sleepAnalysis')
     const barGraphTable = generateBarGraph(csv);
-    document.body.innerHTML += barGraphTable
+    sleepAnalysis.innerHTML += barGraphTable
 
     /**
      * Conduct search with each character change

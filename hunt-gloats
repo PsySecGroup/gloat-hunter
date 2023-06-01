@@ -29,7 +29,7 @@ sed -i -E 's/@[^[:space:]]*//g; s/`//g; s/\t[[:space:]]*/\t/g; s/\t.?RT[[:space:
 sed -e "/{{replaceMe}}/r targets/$1.txt" -e '/{{replaceMe}}/d' template.html > targets/$1.html
 
 # Geneates the Chat Button
-sed -i "s|href=\"{{jitsi}}\"|href=\"https://meet.jit.si/gloat-hunting-$1\"|g" targets/$1.html
+sed -i "s|roomName: '{{jitsi}}',|roomName: 'gloat-hunting-$1',|g" targets/$1.html
 
 # Open the GUI
 if command -v xdg-open &> /dev/null; then
