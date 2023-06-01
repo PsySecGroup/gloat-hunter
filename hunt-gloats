@@ -22,8 +22,8 @@ fi
 # Convert everything to an acceptable format
 awk -F'\t' 'NR>1 { gsub(/[-:]/, " ", $3); t = mktime($3 " 00"); tweet = $11; sub("\t.*", "", tweet); print strftime("%Y-%m-%dT%H:%M:%SZ\t", t), tweet }' targets/$1.csv > targets/$1.txt
 
-# Strips all mentions and starting spaces from the output text
-sed -i -E 's/@[^[:space:]]*//g; s/`//g; s/\t[[:space:]]*/\t/g' targets/$1.txt
+# Strips all mentions, RTs, and starting spaces from the output text
+sed -i -E 's/@[^[:space:]]*//g; s/`//g; s/\t[[:space:]]*/\t/g; s/\t.?RT[[:space:]][[:space:]]*/\t/g' targets/$1.txt
 
 # Geneates the GUI
 sed -e "/{{replaceMe}}/r targets/$1.txt" -e '/{{replaceMe}}/d' template.html > targets/$1.html
