@@ -14,7 +14,7 @@ Everyone be self-snitching these days. Here's a tool that makes gloat-based OSIN
 * Generates a standalone self-contained GUI to conduct offline searches of the targets tweet history
 * Supports queries with OR to search for multiple phrases at the same time
 * Supports queries with quotes for exact match searching
-* Creates a Jitsi link for people to conduct collaborative research at
+* Provides an in-browser video chat for investigators to coordinate and collaborate
 
 ### Coming Soon
 
