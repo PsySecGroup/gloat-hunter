@@ -60,6 +60,5 @@ elif command -v start &> /dev/null; then
 fi
 
 # Uploads the HTML to Keep.sh and gives you a link to share with fellow researchers
-echo "Share this link with fellow researchers so they can help! (This link will self-terminate in 24 hours)"
-LINK=$(curl -s --upload-file targets/$1.html https://free.keep.sh)
-HASH=$(echo "$url" | grep -oP "(?<=/)[^/]+(?=/)")
+#echo "Share this link with fellow researchers so they can help! (This link will self-terminate in 24 hours)"
+#LINK=$(curl -s --upload-file targets/$1.html https://free.keep.sh)
