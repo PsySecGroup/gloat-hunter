@@ -8,9 +8,86 @@ const peers = [];
 
 function loadBountySystem() {
   if (api === undefined) {
-    loadScript('https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.7.0/simplepeer.min.js', connectToPeers)
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.7.0/simplepeer.min.js', () => {
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.3.2/peerjs.min.js', connectToPeers)
+    })
   }
 }
+
+function newWay () {
+  const peer = new SimplePeer({
+    initiator: location.hash === '#initiator',
+    trickle: false,
+    config: {
+      iceServers: [
+        { urls: 'stun:relay.webwormhole.io:3478' },
+        { urls: 'stun:stun.nextcloud.com:443' }
+      ]
+    }
+  });
+  const peerId = getHash(seed, Math.random().toString());
+
+  // Event: When the SimplePeer instance has signaling data to send
+  peer.on('signal', (data) => {
+    console.log('Generated signaling data:', data);
+
+    // Share the signaling data with other peers using your preferred method (e.g., messaging, signaling channel, etc.)
+    // For simplicity, we'll log it here and assume manual sharing between peers
+  });
+
+  // Event: When the SimplePeer instance receives data
+  peer.on('data', (data) => {
+    console.log('Received data:', data.toString());
+  });
+
+  // Connect to PeerJS signaling server
+  const peerJS = new Peer(peerId);
+
+  // Event: When PeerJS connection is open
+  peerJS.on('open', () => {
+    console.log('Connected to PeerJS signaling server');
+    
+    if (peer.initiator) {
+      // You are the initiator, so call the other peer
+      const otherPeerId = '<other-peer-id>'; // Replace with the ID of the peer you want to connect to
+      const conn = peerJS.connect(otherPeerId);
+
+      // Event: When PeerJS connection to the other peer is open
+      conn.on('open', () => {
+        console.log('Connected to the other peer');
+        // Exchange signaling data directly between the peers
+        conn.on('data', (data) => {
+          peer.signal(data);
+        });
+
+        // Start exchanging data with the other peer
+        peer.on('connect', () => {
+          console.log('WebRTC connection established');
+          peer.send('Hello, other peer!');
+        });
+      });
+    } else {
+      // You are not the initiator, so wait for the initiator's call
+      peerJS.on('connection', (conn) => {
+        console.log('Connected to the initiator');
+        // Exchange signaling data directly between the peers
+        conn.on('data', (data) => {
+          peer.signal(data);
+        });
+
+        // Start exchanging data with the initiator
+        peer.on('connect', () => {
+          console.log('WebRTC connection established');
+          peer.send('Hello, initiator!');
+        });
+      });
+    }
+  });
+}
+
+
+
+
 
 function discoverPeers() {
   // Simulated list of discovered peer IDs
