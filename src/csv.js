@@ -1,4 +1,3 @@
-// Create CSV array
 const csv = `
 {{replaceMe}}
 `.split('\n').map(line => {

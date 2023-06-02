@@ -99,8 +99,6 @@ queryHelpButton.addEventListener('mouseout', () => {
   queryHelp.classList.remove('visible');
 });
 
-
-
 searchInput.onkeyup = function search (e) {
   const value = e.target.value.toLowerCase()
   if (value === '') {

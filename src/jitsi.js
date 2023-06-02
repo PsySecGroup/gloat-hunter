@@ -1,4 +1,3 @@
-let api
 const domain = 'meet.jit.si';
 const options = {
 roomName: '{{jitsi}}',
@@ -7,6 +6,8 @@ roomName: '{{jitsi}}',
   parentNode: document.querySelector('#jitsi'),
   lang: 'en'
 };
+
+let api
 
 /**
  * 
