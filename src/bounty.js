@@ -14,11 +14,7 @@ function loadBountySystem() {
         config: {
           iceServers: [
             { urls: 'stun:relay.webwormhole.io:3478' },
-            { urls: 'stun:stun.nextcloud.com:443' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-            { urls: 'stun:stun3.l.google.com:19302' },
-            { urls: 'stun:stun4.l.google.com:19302' },
+            { urls: 'stun:stun.nextcloud.com:443' }
           ]
         },
       })
