@@ -1,12 +1,13 @@
 // https://github.com/feross/simple-peer
 
+let peers
+
 /**
  * 
  */
 function loadBountySystem() {
   if (api === undefined) {
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.7.0/simplepeer.min.js', () => {
-      console.log('loaded')
       peers = new SimplePeer({
         initiator: false,
         trickle: false,
