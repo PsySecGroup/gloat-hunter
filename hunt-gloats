@@ -38,8 +38,8 @@ with open("targets/$1.html", "w") as file:
     file.write(line)
 EOF
 
-# Geneates the GUI
-sed -i -e "/{{replaceMe}}/r targets/$1.txt" -e '/{{replaceMe}}/d' targets/$1.html
+# Hook in Jitsi embed
+sed -i "s|roomName: '{{jitsi}}',|roomName: 'gloat-hunting-$1',|g" targets/$1.html
 
 # Convert everything to an acceptable format
 awk -F'\t' 'NR>1 { gsub(/[-:]/, " ", $3); t = mktime($3 " 00"); tweet = $11; sub("\t.*", "", tweet); print strftime("%Y-%m-%dT%H:%M:%SZ\t", t), tweet }' targets/$1.csv > targets/$1.txt
@@ -47,9 +47,8 @@ awk -F'\t' 'NR>1 { gsub(/[-:]/, " ", $3); t = mktime($3 " 00"); tweet = $11; sub
 # Strips all mentions, RTs, HTML entities, and starting spaces from the output text
 sed -i -E 's/@[^[:space:]]*//g; s/`//g; s/\t[[:space:]]*/\t/g; s/\t.?RT[[:space:]][[:space:]]*/\t/g; s/&[^;]{1,6};/&/g' targets/$1.txt
 
-# Geneates the Chat Button
-sed -i "s|roomName: '{{jitsi}}',|roomName: 'gloat-hunting-$1',|g" targets/$1.html
-
+# Geneates the GUI
+sed -i -e "/{{replaceMe}}/r targets/$1.txt" -e '/{{replaceMe}}/d' targets/$1.html
 
 # Open the GUI
 if command -v xdg-open &> /dev/null; then
