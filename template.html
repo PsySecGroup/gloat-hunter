@@ -50,11 +50,16 @@
         document.head.appendChild(script);
       }
 
+      import './src/keys.js'
       import './src/jitsi.js'
       import './src/csv.js'
       import './src/bounty.js'
       import './src/sleepAnalysis.js'
       import './src/search.js'
+
+      var encryptedText = applyCipher("Hello, World!", "lksjdfhglksdjfghlksdjfghlskdfhgslkdfjhs");
+      console.log(encryptedText);
+
 
       /**
        * 

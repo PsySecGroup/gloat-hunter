@@ -12,6 +12,13 @@ function loadBountySystem() {
   }
 }
 
+function discoverPeers() {
+  // Simulated list of discovered peer IDs
+  const discoveredPeers = ['peer1', 'peer2', 'peer3'];
+  
+  return discoveredPeers;
+}
+
 // Establish Connections
 function connectToPeers() {
   // Connect to signaling server and retrieve connection details
@@ -32,6 +39,7 @@ function connectToPeers() {
 
     // Handle connection events
     peer.on('signal', data => {
+      console.log('signal')
       // Send signaling data to the remote peer
       sendSignalingData(peerData.id, data); // Implement this function
     });
@@ -41,6 +49,7 @@ function connectToPeers() {
     });
 
     peer.on('data', data => {
+      console.log('data')
       handleKeystoreUpdate(JSON.parse(data)); // Implement this function
     });
 
@@ -53,12 +62,7 @@ function connectToPeers() {
   });
 }
 
-function discoverPeers() {
-  // Simulated list of discovered peer IDs
-  const discoveredPeers = ['peer1', 'peer2', 'peer3'];
-  
-  return discoveredPeers;
-}
+
 
 // Synchronize Keystore
 function synchronizeKeystore() {
