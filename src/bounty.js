@@ -21,6 +21,37 @@ function discoverPeers() {
 
 // Establish Connections
 function connectToPeers() {
+  const self = new SimplePeer({
+    initiator: true,
+    trickle: false,
+    config: {
+      iceServers: [
+        { urls: 'stun:relay.webwormhole.io:3478' },
+        { urls: 'stun:stun.nextcloud.com:443' }
+      ]
+    }
+  });
+
+  self.on('signal', data => {
+    console.log('signal', data)
+    // Send signaling data to the remote peer
+    //sendSignalingData(peerData.id, data); // Implement this function
+  });
+
+  self.on('connect', () => {
+    console.log('Connected to peer');
+
+  });
+
+  self.on('data', data => {
+    console.log('data')
+    handleKeystoreUpdate(JSON.parse(data)); // Implement this function
+  });
+
+  self.on('close', () => {
+    console.log('Connection closed');
+  });
+
   // Connect to signaling server and retrieve connection details
   const discoveredPeers = discoverPeers(); // Implement this function
 
@@ -46,6 +77,7 @@ function connectToPeers() {
 
     peer.on('connect', () => {
       console.log('Connected to peer:', peerData.id);
+
     });
 
     peer.on('data', data => {
@@ -56,11 +88,9 @@ function connectToPeers() {
     peer.on('close', () => {
       console.log('Connection closed:', peerData.id);
     });
-
-    // Add the new peer to the peers array
-    peers.push(peer);
   });
 }
+
 
 
 

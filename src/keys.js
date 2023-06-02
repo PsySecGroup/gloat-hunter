@@ -1,4 +1,5 @@
 const characters = [];
+const seed = 'random_id'
 
 // Numbers
 for (var i = 48; i <= 57; i++) {
@@ -15,7 +16,7 @@ for (var i = 97; i <= 122; i++) {
   characters.push(String.fromCharCode(i));
 }
 
-function applyCipher(text, cipher) {
+function getHash(text, cipher) {
   const cipherLength = cipher.length;
   let accumulator = 0
   let result = '';
@@ -26,7 +27,7 @@ function applyCipher(text, cipher) {
       ? text.charCodeAt(i) * (index + 1)
       : i * i
     accumulator += charValue
-    const cipherIndex = ((i * charValue) ^ (accumulator * cipherLength)) % cipherLength
+    const cipherIndex = ((i * charValue) ^ (accumulator * cipherLength * seed)) % cipherLength
     const cipherCharValue = cipher.charCodeAt(cipherIndex) || i;
     const newCharacter = characters[(charValue * cipherCharValue) % characters.length]
     result += newCharacter

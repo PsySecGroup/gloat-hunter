@@ -1,15 +1,19 @@
 <html>
-  <head></head>
+  <head>
+    <title>Gloat Hunt of
+{{target}}
+    </title>
+  </head>
   <body>
     <style>
       import './src/style.css'
     </style>
     <div>
       <div class="tabs">
-        <div class="tab active" onclick="changeTab(0)"><h4>Offline Search</h4></div>
-        <div class="tab" onclick="changeTab(1)"><h4>Sleep Analysis</h4></div>
-        <div class="tab" onclick="changeTab(2)"><h4>Group Chat</h4></div>
-        <div class="tab" onclick="changeTab(3)"><h4>Bounty System</h4></div>
+        <div class="tab active" onclick="changeTab(0)"><h4>Search</h4></div>
+        <div class="tab" onclick="changeTab(1)"><h4>Sleep</h4></div>
+        <div class="tab" onclick="changeTab(2)"><h4>Chat</h4></div>
+        <div class="tab" onclick="changeTab(3)"><h4>Bounty</h4></div>
       </div>
       <div class="tab-content active">
         <input id="search" type="text" placeholder="Search here..."/>
@@ -57,9 +61,8 @@
       import './src/sleepAnalysis.js'
       import './src/search.js'
 
-      var encryptedText = applyCipher("Hello, World!", "lksjdfhglksdjfghlksdjfghlskdfhgslkdfjhs");
-      console.log(encryptedText);
-
+      var hash = getHash("Hello, World!", "lksjdfhglksdjfghlksdjfghlskdfhgslkdfjhs");
+      console.log(hash);
 
       /**
        * 
