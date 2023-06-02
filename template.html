@@ -1,86 +1,84 @@
 <html>
-<head></head>
-<body>
-  <style>
-    import './src/style.css'
-  </style>
-  <div>
-    <div class="tabs">
-      <div class="tab active" onclick="changeTab(0)"><h4>Offline Search</h4></div>
-      <div class="tab" onclick="changeTab(1)"><h4>Sleep Analysis</h4></div>
-      <div class="tab" onclick="changeTab(2)"><h4>Group Chat</h4></div>
-      <div class="tab" onclick="changeTab(3)"><h4>Bounty System</h4></div>
-    </div>
-    <div class="tab-content active">
-      <input id="search" type="text" placeholder="Search here..."/>
-      <a href="#" class="button" id="queryHelpButton">
-        ?
-      </a>
-      <div id="queryHelp">
-        <h3>Query Options</h3>
-        <ul>
-          <li><b>basket</b> finds anything that starts with 'basket' (Like '<b>basket</b>ball and <b>basket</b>weaving)</li>
-          <li><b>basket or glove</b> will find anything that starts 'basket' or 'glove'</li>
-          <li><b>'basket'</b> (with quotes) will only find anything that is the word 'basket'</li>
-        </ul>
+  <head></head>
+  <body>
+    <style>
+      import './src/style.css'
+    </style>
+    <div>
+      <div class="tabs">
+        <div class="tab active" onclick="changeTab(0)"><h4>Offline Search</h4></div>
+        <div class="tab" onclick="changeTab(1)"><h4>Sleep Analysis</h4></div>
+        <div class="tab" onclick="changeTab(2)"><h4>Group Chat</h4></div>
+        <div class="tab" onclick="changeTab(3)"><h4>Bounty System</h4></div>
       </div>
-      <br/><br/>
-      <table id="results"></table>
+      <div class="tab-content active">
+        <input id="search" type="text" placeholder="Search here..."/>
+        <a href="#" class="button" id="queryHelpButton">
+          ?
+        </a>
+        <div id="queryHelp">
+          <h3>Query Options</h3>
+          <ul>
+            <li><b>basket</b> finds anything that starts with 'basket' (Like '<b>basket</b>ball and <b>basket</b>weaving)</li>
+            <li><b>basket or glove</b> will find anything that starts 'basket' or 'glove'</li>
+            <li><b>'basket'</b> (with quotes) will only find anything that is the word 'basket'</li>
+          </ul>
+        </div>
+        <br/><br/>
+        <table id="results"></table>
+      </div>
+      <div class="tab-content" id="sleepAnalysis"></div>
+      <div class="tab-content" id="jitsi">
+        <span id="loadingJitsi">Loading...</span>
+      </div>
+      <div class="tab-content" id="bounty">
+        <span id="loadingBounty">Coming soon!</span>
+      </div>
     </div>
-    <div class="tab-content" id="sleepAnalysis"></div>
-    <div class="tab-content" id="jitsi">
-      <span id="loadingJitsi">Loading...</span>
-    </div>
-    <div class="tab-content" id="bounty">
-      <span id="loadingBounty">Coming soon!</span>
-    </div>
-  </div>
-  <div>
-  </div>
-  <script>
-    /**
-     * 
-     */
-    function loadScript(url, callback) {
-      var script = document.createElement('script');
-      script.src = url;
+    <script>
+      /**
+       * 
+       */
+      function loadScript(url, callback) {
+        var script = document.createElement('script');
+        script.src = url;
 
-      // Execute the callback function after the script is loaded
-      script.onload = callback;
+        // Execute the callback function after the script is loaded
+        script.onload = callback;
 
-      // Append the script element to the document
-      document.head.appendChild(script);
-    }
-
-    import './src/jitsi.js'
-    import './src/csv.js'
-    import './src/bounty.js'
-    import './src/sleepAnalysis.js'
-    import './src/search.js'
-
-    /**
-     * 
-     */
-    function changeTab(tabIndex) {
-      var tabs = document.getElementsByClassName("tab");
-      var tabContents = document.getElementsByClassName("tab-content");
-
-      // Remove "active" class from all tabs and tab contents
-      for (var i = 0; i < tabs.length; i++) {
-        tabs[i].classList.remove("active");
-        tabContents[i].classList.remove("active");
+        // Append the script element to the document
+        document.head.appendChild(script);
       }
 
-      // Add "active" class to the clicked tab and corresponding tab content
-      tabs[tabIndex].classList.add("active");
-      tabContents[tabIndex].classList.add("active");
+      import './src/jitsi.js'
+      import './src/csv.js'
+      import './src/bounty.js'
+      import './src/sleepAnalysis.js'
+      import './src/search.js'
 
-      if (tabIndex === 2) {
-        loadGroupChat()
-      } else if (tabIndex === 3) {
-        loadBountySystem()
+      /**
+       * 
+       */
+      function changeTab(tabIndex) {
+        var tabs = document.getElementsByClassName("tab");
+        var tabContents = document.getElementsByClassName("tab-content");
+
+        // Remove "active" class from all tabs and tab contents
+        for (var i = 0; i < tabs.length; i++) {
+          tabs[i].classList.remove("active");
+          tabContents[i].classList.remove("active");
+        }
+
+        // Add "active" class to the clicked tab and corresponding tab content
+        tabs[tabIndex].classList.add("active");
+        tabContents[tabIndex].classList.add("active");
+
+        if (tabIndex === 2) {
+          loadGroupChat()
+        } else if (tabIndex === 3) {
+          loadBountySystem()
+        }
       }
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
