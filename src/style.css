@@ -2,6 +2,9 @@ html, body {
   margin: 0;
   font-family:  Arial;
 }
+button {
+  cursor: pointer;
+}
 .vTop {
   vertical-align: top;
 }

@@ -16,17 +16,27 @@
         <div class="tab" onclick="changeTab(3)"><h4>Bounty</h4></div>
       </div>
       <div class="tab-content active">
-        <input id="search" type="text" placeholder="Search here..."/>
-        <a href="#" class="button" id="queryHelpButton">
-          ?
-        </a>
-        <div id="queryHelp">
-          <h3>Query Options</h3>
-          <ul>
-            <li><b>basket</b> finds anything that starts with 'basket' (Like '<b>basket</b>ball and <b>basket</b>weaving)</li>
-            <li><b>basket or glove</b> will find anything that starts 'basket' or 'glove'</li>
-            <li><b>'basket'</b> (with quotes) will only find anything that is the word 'basket'</li>
-          </ul>
+        <div>
+          <input id="search" type="text" placeholder="Search here..."/>
+          <a href="#" class="button" id="queryHelpButton">
+            ?
+          </a>
+          <div id="queryHelp">
+            <h3>Query Options</h3>
+            <ul>
+              <li><b>basket</b> finds tweets that contain 'basket' (Like '<b>basket</b>ball and <b>basket</b>weaving)</li>
+              <li><b>basket OR glove</b> will find tweets that contains 'basket' or 'glove'</li>
+              <li><b>basket AND glove</b> will find tweets that contains 'basket' and 'glove'</li>
+              <li><b>"basket"</b> will only find tweets with the exact word 'basket'</li>
+              <li><b>NOT basket</b> will not return tweets that contain 'basket'</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <h4>Common Queries</h4>
+          <button class="button" onClick="setQuery(queries.location);">
+            Location <span id="locationQuery"></span>
+          </a>
         </div>
         <br/><br/>
         <table id="results"></table>
@@ -60,9 +70,6 @@
       import './src/bounty.js'
       import './src/sleepAnalysis.js'
       import './src/search.js'
-
-      var hash = getHash("Hello, World!", "lksjdfhglksdjfghlksdjfghlskdfhgslkdfjhs");
-      console.log(hash);
 
       /**
        * 

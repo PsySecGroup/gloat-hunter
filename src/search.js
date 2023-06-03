@@ -1,22 +1,106 @@
 const quotes = /'|"/g
 const removeUsers = /\@[^\s\n]+/g
 const removeHash = /\#[^\s\n]+/g
-const wordIndex = createIndex(csv)
-const wordIndexKeys = Object.keys(wordIndex)
 const queryHelpButton = document.getElementById('queryHelpButton');
 const queryHelp = document.getElementById('queryHelp');
+
 let searchTimeout
 
 /**
  * Conduct search with each character change
  */
 const searchInput = document.getElementById('search')
+searchInput.focus()
 const searchResults = document.getElementById('results')
+
+const operators = {
+  OR: '|',
+  AND: '(?=.*',
+  NOT: '(?!.*'
+};
+
+const queries = {
+  location: '"i live" OR "my house" OR "my home" OR "my apartment" OR "my condo"'
+}
+
+const buttons = {
+  locationQuery: 'location'
+}
 
 /**
  * 
  */
-function performSearch (value) {
+function setQuery(query) {
+  searchInput.value = query
+  performSearch(query)
+}
+
+/**
+ * 
+ */
+function getCount (query) {
+  return performSearch(query, true)
+}
+
+/**
+ * 
+ */
+function getRegex(str) {
+  const regexParts = [];
+  const words = str.split(/\s+/);
+
+  let isInPhrase = false;
+  let isConditional = false
+  let currentPhrase = '';
+
+  let i = 0
+  for (const word of words) {
+    if (word.startsWith('"')) {
+      if (word.endsWith('"')) {
+        const phrase = word.slice(1, -1);
+        regexParts.push(`\\b${phrase.replace(/"/g, '\\"')}\\b`);
+      } else {
+        isInPhrase = true;
+        currentPhrase = word.slice(1);
+      }
+    } else if (isInPhrase && word.endsWith('"')) {
+      isInPhrase = false;
+      currentPhrase += ' ' + word.slice(0, -1);
+      regexParts.push(`\\b${currentPhrase.replace(/"/g, '\\"')}\\b`);
+    } else if (isInPhrase) {
+      currentPhrase += ' ' + word;
+    } else if (Object.keys(operators).includes(word)) {
+      if (i < words.length - 1) {
+        regexParts.push(operators[word]);
+        if (word === 'AND' || word === 'NOT') {
+          isConditional = true
+        }
+      }
+    } else {
+      regexParts.push(word);
+      if (isConditional) {
+        regexParts.push(')')
+        isConditional = false
+      }
+    }
+    i += 1
+  }
+
+  if (isConditional) {
+    regexParts.push(')')
+    isConditional = false
+  }
+
+  const regexString = regexParts.join('');
+  const regex = new RegExp(regexString, 'i');
+
+  return regex;
+}
+
+/**
+ * 
+ */
+function performSearch (value, countOnly = false) {
   if (value === '') {
     return
   }
@@ -24,49 +108,31 @@ function performSearch (value) {
   searchResults.innerHTML = ``
 
   const candidates = []
+  const queryRegex = getRegex(value.trim())
 
-  const words = value.trim().toLowerCase().split(/ OR /ig)
-  const queryRegex = new RegExp(words.join('|').replace(quotes, ''), 'gi')
-
-  for (query of words) {
-    const withoutQuotes = query.replace(quotes, '')
-    const indexMatches = wordIndexKeys
-      .filter(key => {
-        if (query[0] === '"' || query[0] === `'`) {
-          return key === withoutQuotes
-        } else {
-          return key.indexOf(query) === 0  
-        }
-        
-      })
-      .map(key => wordIndex[key])
-
-    const tweetIds = [...new Set(indexMatches.flat())]; 
-
-    for (const tweetId of tweetIds) {
-      const tweet = csv[tweetId]
-
-      if (tweet === undefined) {
-        continue
-      }
-
-      const strippedWords = words.map(word => word.replace(quotes, ''))
-      candidates.push([
-        tweet[0],
-        tweet[1]
-          .replace(removeUsers, '')
-          .replace(removeHash, '')
-          .replace(queryRegex, match => {
-            const index = strippedWords.indexOf(match);
-
-            if (index >= 0) {
-              return `<span class="highlight">${strippedWords[index]}</span>`;
-            }
-
-            return match;                
-          })
-      ])  
+  for (const tweet of csv) {
+    if (tweet === undefined) {
+      continue
     }
+
+    const matches = tweet[1].match(queryRegex)
+  
+    if (matches !== null) {
+      if (countOnly) {
+        candidates.push(true)
+      } else {
+        candidates.push([
+          tweet[0],
+          tweet[1]
+            .replace(removeUsers, '')
+            .replace(removeHash, '')
+        ])
+      }
+    }
+  }
+
+  if (countOnly) {
+    return candidates.length
   }
 
   candidates.sort((a, b) => a[0] - b[0])
@@ -100,7 +166,7 @@ queryHelpButton.addEventListener('mouseout', () => {
 });
 
 searchInput.onkeyup = function search (e) {
-  const value = e.target.value.toLowerCase()
+  const value = e.target.value
   if (value === '') {
     return
   }
@@ -112,4 +178,9 @@ searchInput.onkeyup = function search (e) {
   searchTimeout = setTimeout(() => {
     performSearch(value)
   }, 300)
+}
+
+for (const button of Object.keys(buttons)) {
+  const count = performSearch(queries[buttons[button]], true)
+  document.getElementById(button).innerHTML = `(${count})`
 }
