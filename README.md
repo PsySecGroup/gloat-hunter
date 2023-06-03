@@ -2,7 +2,7 @@
 
 Everyone be self-snitching these days. Here's a tool that makes gloat-based OSINT easier to find.
 
-![image](https://github.com/PsySecGroup/gloat-hunter/assets/76200774/8221c58e-d86b-4d15-9266-217630be8e00)
+![image](https://user-images.githubusercontent.com/76200774/243126368-f15ecad3-0819-4f1b-8ca1-d52a3089f646.png)
 
 ![image](https://github.com/PsySecGroup/gloat-hunter/assets/76200774/cd01770e-4b13-4e2e-b01c-b6f7a1c31ae7)
 
@@ -12,13 +12,13 @@ Everyone be self-snitching these days. Here's a tool that makes gloat-based OSIN
 
 * Gathers the last 3,200 tweets of a target
 * Generates a standalone self-contained GUI to conduct offline searches of the targets tweet history
-* Supports queries with OR to search for multiple phrases at the same time
+* Supports queries with AND, OR, and NOT conditions
 * Supports queries with quotes for exact match searching
 * Provides an in-browser video chat for investigators to coordinate and collaborate
+* Buttons populated with result counts for common investigative queries
 
 ### Coming Soon
 
-* Provides a list of common queries to assist with common investigative tasks
 * Generates a link for others to download the GUI
 * Bounty System
 
