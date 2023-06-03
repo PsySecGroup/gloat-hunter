@@ -1,6 +1,6 @@
 # gloat-hunter
 
-Everyone be self-snitching these days. Here's a tool that makes gloat-based OSINT easier to find.
+Everyone be self-snitching these days. Here's a tool that makes finding PII on a Twitter user super easy.
 
 ![image](https://user-images.githubusercontent.com/76200774/243126368-f15ecad3-0819-4f1b-8ca1-d52a3089f646.png)
 
@@ -21,6 +21,11 @@ Everyone be self-snitching these days. Here's a tool that makes gloat-based OSIN
 
 * Generates a link for others to download the GUI
 * Bounty System
+
+## Quick Start
+
+[![Open in Cloud Shell](https://user-images.githubusercontent.com/27065646/92304704-8d146d80-ef80-11ea-8c29-0deaabb1c702.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/psysecgroup/gloat-hunter&tutorial=README.md)
+<a href="https://repl.it/github/psysecgroup/gloat-hunter"><img src="https://replit.com/badge/github/psysecgroup/gloat-hunter" alt="Run on Replit" height="50"></a>
 
 ## Requires
 
