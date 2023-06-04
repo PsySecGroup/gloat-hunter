@@ -5,9 +5,11 @@ if [ ! -e "gather-tweets" ]; then
     # Check if curl is installed
     if command -v curl &> /dev/null; then
         curl -s -O https://raw.githubusercontent.com/PsySecGroup/gather-tweets/main/gather-tweets
+        chmod u+x gather-tweets
     # Check if wget is installed
     elif command -v wget &> /dev/null; then
         wget -q https://raw.githubusercontent.com/PsySecGroup/gather-tweets/main/gather-tweets
+        chmod u+x gather-tweets
     else
         echo "Neither curl nor wget found. Please install either of them."
     fi
