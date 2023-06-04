@@ -1,6 +1,8 @@
 const characters = [];
 const seed = 'random_id'
 
+let uniqudId = 0
+
 // Numbers
 for (var i = 48; i <= 57; i++) {
   characters.push(String.fromCharCode(i));
@@ -34,4 +36,10 @@ function getHash(text, cipher) {
   }
 
   return result;
+}
+
+function getUniqueId () {
+  const result = getHash(new Date().toISOString() + Math.random() + uniqudId, seed)
+  uniqudId += 1
+  return result
 }

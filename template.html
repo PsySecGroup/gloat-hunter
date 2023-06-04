@@ -22,6 +22,7 @@
             ?
           </a>
           <div id="queryHelp">
+            <!--
             <h3>Query Options</h3>
             <ul>
               <li><b>basket</b> finds tweets that contain 'basket' (Like '<b>basket</b>ball and <b>basket</b>weaving)</li>
@@ -30,13 +31,16 @@
               <li><b>"basket"</b> will only find tweets with the exact word 'basket'</li>
               <li><b>NOT basket</b> will not return tweets that contain 'basket'</li>
             </ul>
+          -->
           </div>
         </div>
         <div>
           <h4>Common Queries</h4>
-          <button class="button" onClick="setQuery(queries.location);">
-            Location <span id="locationQuery"></span>
-          </a>
+          <div id="commonQueries">
+            <button class="button" onClick="setQuery(queries.location);">
+              Location <span id="locationQuery"></span>
+            </button>
+          </div>
         </div>
         <br/><br/>
         <table id="results"></table>
@@ -70,6 +74,7 @@
       import './src/bounty.js'
       import './src/sleepAnalysis.js'
       import './src/search.js'
+      import './src/pubnub.js'
 
       /**
        * 
