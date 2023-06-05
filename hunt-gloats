@@ -2,32 +2,38 @@
 
 # Gather tweets
 if [ ! -e "gather-tweets" ]; then
-    # Check if curl is installed
-    if command -v curl &> /dev/null; then
-        curl -s -O https://raw.githubusercontent.com/PsySecGroup/gather-tweets/main/gather-tweets
-        chmod u+x gather-tweets
-    # Check if wget is installed
-    elif command -v wget &> /dev/null; then
-        wget -q https://raw.githubusercontent.com/PsySecGroup/gather-tweets/main/gather-tweets
-        chmod u+x gather-tweets
-    else
-        echo "Neither curl nor wget found. Please install either of them."
-    fi
+  # Check if curl is installed
+  if command -v curl &> /dev/null; then
+    curl -s -O https://raw.githubusercontent.com/PsySecGroup/gather-tweets/main/gather-tweets
+    chmod u+x gather-tweets
+  # Check if wget is installed
+  elif command -v wget &> /dev/null; then
+    wget -q https://raw.githubusercontent.com/PsySecGroup/gather-tweets/main/gather-tweets
+    chmod u+x gather-tweets
+  else
+    echo "Neither curl nor wget found. Please install either of them."
+  fi
 fi
 
 # A second argument in the CLI will prevent a tweet gather
 if [ ! $2 ]; then
   ./gather-tweets $1
+
+  if [ ! -f "$file_path" ]; then
+    echo "The twint process has failed. Please see https://github.com/PsySecGroup/gather-tweets/issues/2 for more details"
+    exit
+  fi
+
   mv $1.csv targets/
 fi
 
 # Get python command
 if command -v python &> /dev/null; then
-    pythonCommand='python'
+  pythonCommand='python'
 elif command -v python3 &> /dev/null; then
-    pythonCommand='python3'
+  pythonCommand='python3'
 elif command -v python27 &> /dev/null; then
-    pythonCommand='python27'
+  pythonCommand='python27'
 fi
 
 # Bootleg import system
@@ -70,13 +76,9 @@ sed -i -e "/{{replaceMe}}/r targets/$1.txt" -e '/{{replaceMe}}/d' targets/$1.htm
 
 # Open the GUI
 if command -v xdg-open &> /dev/null; then
-    xdg-open targets/$1.html
+  xdg-open targets/$1.html
 elif command -v open &> /dev/null; then 
-    open targets/$1.html
+  open targets/$1.html
 elif command -v start &> /dev/null; then
-    start targets/$1.html
+  start targets/$1.html
 fi
-
-# Uploads the HTML to Keep.sh and gives you a link to share with fellow researchers
-#echo "Share this link with fellow researchers so they can help! (This link will self-terminate in 24 hours)"
-#LINK=$(curl -s --upload-file targets/$1.html https://free.keep.sh)
