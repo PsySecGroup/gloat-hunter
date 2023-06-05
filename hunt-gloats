@@ -21,8 +21,17 @@ if [ ! $2 ]; then
   mv $1.csv targets/
 fi
 
+# Get python command
+if command -v python &> /dev/null; then
+    pythonCommand='python'
+elif command -v python3 &> /dev/null; then
+    pythonCommand='python3'
+elif command -v python27 &> /dev/null; then
+    pythonCommand='python27'
+fi
+
 # Bootleg import system
-python <<EOF
+eval "$pythonCommand" <<EOF
 import re
 file_location = "template.html"
 with open(file_location, "r") as file:
