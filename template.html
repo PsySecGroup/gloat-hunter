@@ -13,7 +13,8 @@
         <div class="tab active" onclick="changeTab(0)"><h4>Search</h4></div>
         <div class="tab" onclick="changeTab(1)"><h4>Sleep</h4></div>
         <div class="tab" onclick="changeTab(2)"><h4>Chat</h4></div>
-        <div class="tab" onclick="changeTab(3)"><h4>Bounty</h4></div>
+        <div class="tab" onclick="changeTab(3)"><h4>Engagement</h4></div>
+        <div class="tab" onclick="changeTab(4)"><h4>Bounty</h4></div>
       </div>
       <div class="tab-content active">
         <div>
@@ -49,6 +50,38 @@
       <div class="tab-content" id="jitsi">
         <span id="loadingJitsi">Loading...</span>
       </div>
+      <div class="tab-content" id="performance">
+        <p>Engagement Timeline to give us understanding of reach</p>
+        <table>
+          <thead></thead>
+          <tbody>
+            <tr>
+              <td>
+                Likes (<span id="highestLikes"></span>)
+              </td>
+              <td id="likeChart"></td>
+            </tr>
+            <tr>
+              <td>
+                Retweets (<span id="highestRetweets"></span>)
+              </td>
+              <td id="retweetChart"></td>
+            </tr>
+            <tr>
+              <td>
+                Replies (<span id="highestReplies"></span>)
+              </td>
+              <td id="replyChart"></td>
+            </tr>
+            <tr>
+              <td>
+                Engagement Chances
+              </td>
+              <td id="engagementChart"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="tab-content" id="bounty">
         <span id="loadingBounty">Coming soon!</span>
       </div>
@@ -75,6 +108,7 @@
       import './src/sleepAnalysis.js'
       import './src/search.js'
       import './src/pubnub.js'
+      import './src/performance.js'
 
       /**
        * 
@@ -96,6 +130,8 @@
         if (tabIndex === 2) {
           loadGroupChat()
         } else if (tabIndex === 3) {
+          loadPerformance()
+        } else if (tabIndex === 4) {
           loadBountySystem()
         }
       }

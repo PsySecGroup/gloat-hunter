@@ -119,6 +119,7 @@ function performSearch (value, countOnly = false) {
             .replace(removeUsers, '')
             .replace(removeHash, '')
         ])
+        console.log(tweet)
       }
     }
   }

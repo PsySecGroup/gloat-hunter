@@ -163,3 +163,6 @@ button {
 #queryHelp.visible {
   opacity: 1;
 }
+canvas {
+  height: 50px;
+}

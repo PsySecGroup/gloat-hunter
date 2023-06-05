@@ -66,7 +66,19 @@ sed -i "s|roomName: '{{jitsi}}',|roomName: 'gloat-hunting-$1-$random_id',|g" tar
 sed -i "s|const seed = 'random_id'|const seed = $random_id|g" targets/$1.html
 
 # Convert everything to an acceptable format
-awk -F'\t' 'NR>1 { gsub(/[-:]/, " ", $3); t = mktime($3 " 00"); tweet = $11; sub("\t.*", "", tweet); print strftime("%Y-%m-%dT%H:%M:%SZ\t", t), tweet }' targets/$1.csv > targets/$1.txt
+awk -F'\t' 'NR>1 {
+  gsub(/[-:]/, " ", $3);
+  t = mktime($3 " 00");
+  tweet = $11;
+  sub("\t.*", "", tweet);
+  replies = $16;
+  retweets = $17;
+  likes = $18;
+  id = $1;
+  if (tweet != "" && length(tweet) > 0) {
+    print strftime("%Y-%m-%dT%H:%M:%SZ\t", t), tweet, "\t", replies, "\t", retweets, "\t", likes, "\t", id
+  }
+}' targets/$1.csv > targets/$1.txt
 
 # Strips all mentions, RTs, HTML entities, and starting spaces from the output text
 sed -i -E 's/@[^[:space:]]*//g; s/`//g; s/\t[[:space:]]*/\t/g; s/\t.?RT[[:space:]][[:space:]]*/\t/g; s/&[^;]{1,6};/&/g' targets/$1.txt
