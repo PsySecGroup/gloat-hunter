@@ -14,7 +14,7 @@ function Sparkline(element, options = {}) {
     tooltip: null,
     ...options,
   }
-  console.log(this.options)
+
   this.element.innerHTML = "<canvas></canvas>";
   this.canvas = this.element.firstChild;
   this.context = this.canvas.getContext("2d");
@@ -117,7 +117,8 @@ function loadPerformance () {
   const likes = []
   const retweets = []
   const replies = []
-  
+  const sortedCsv = csv.sort((a, b) => a[0] - b[0])
+
   // @TODO: Literally fight me about this, please, fr fr
   const weights = {
     likes: 1,
@@ -128,6 +129,7 @@ function loadPerformance () {
   let highestLike = 0
   let highestRetweet = 0
   let highestReply = 0
+  let highestEngagement = 0
 
   const chartOptions = {
     lineColor: "#666",
@@ -136,7 +138,7 @@ function loadPerformance () {
     dotRadius: 3,
     width: 500,
     tooltip: function(value, index, collection) {
-      return value
+      return sortedCsv[index][0].toISOString()
     }
   }
 
@@ -145,7 +147,7 @@ function loadPerformance () {
   const replyChart = new Sparkline(document.getElementById('replyChart'), chartOptions)
   const engagementChart = new Sparkline(document.getElementById('engagementChart'), chartOptions)
 
-  csv.forEach(line => {
+  sortedCsv.forEach(line => {
     if (line === undefined) {
       return
     }
@@ -165,32 +167,33 @@ function loadPerformance () {
     likes.push(likeCount)
     if (likeCount > highestLike) {
       highestLike = likeCount
-      console.log(highestLike)
     }
   })
 
-  document.getElementById('highestLikes').innerHTML = highestLike
-  document.getElementById('highestRetweets').innerHTML = highestRetweet
-  document.getElementById('highestReplies').innerHTML = highestReply
-
-  const engagementRatio = csv.map(line => {
+  const engagementRatio = sortedCsv.map(line => {
     if (line === undefined) {
       return 0
     }
 
     const [ createdAt, tweet, replyCount, retweetCount, likeCount ] = line
 
-    const normalizedLikes = likeCount / highestLike;
-    const normalizedRetweets = retweetCount / highestRetweet;
-    const normalizedReplies = replyCount / highestReply;
+    const compositeScore = replyCount > 0 && likeCount === 0
+      ? 1
+      : replyCount === 0 && likeCount === 0
+        ? 0
+        : replyCount / likeCount
 
-    const compositeScore =
-      weights.likes * normalizedLikes +
-      weights.retweets * normalizedRetweets +
-      weights.replies * normalizedReplies;
+    if (compositeScore > highestEngagement) {
+      highestEngagement = compositeScore
+    }
 
     return compositeScore
   })
+
+  document.getElementById('highestLikes').innerHTML = highestLike
+  document.getElementById('highestRetweets').innerHTML = highestRetweet
+  document.getElementById('highestReplies').innerHTML = highestReply
+  document.getElementById('highestEngagement').innerHTML = (highestEngagement * 100).toFixed(2) + '%'
 
   likeChart.draw(likes)
   retweetChart.draw(retweets)

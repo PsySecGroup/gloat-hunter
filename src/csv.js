@@ -1,6 +1,7 @@
 const csv = `
 {{replaceMe}}
-`.split('\n').map(line => {
+`.split('\n')
+.map(line => {
   line = line.trim()
 
   if (line === '') {
@@ -8,8 +9,15 @@ const csv = `
   }
 
   const parts = line.split('\t')
-  console.log(line)
-  console.log(parts)
+
+  if (parts[5] === undefined) {
+    // Accounting for empty tweets
+    parts[5] = parts[4]
+    parts[4] = parts[3]
+    parts[3] = parts[2]
+    parts[1] = ''
+  }
+
   return [
     new Date(parts[0]), // creation time
     (parts[1] || '').trim().toLowerCase(), // tweet

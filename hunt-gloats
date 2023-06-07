@@ -75,9 +75,8 @@ awk -F'\t' 'NR>1 {
   retweets = $17;
   likes = $18;
   id = $1;
-  if (tweet != "" && length(tweet) > 0) {
-    print strftime("%Y-%m-%dT%H:%M:%SZ\t", t), tweet, "\t", replies, "\t", retweets, "\t", likes, "\t", id
-  }
+
+  print strftime("%Y-%m-%dT%H:%M:%SZ\t", t), tweet, "\t", replies, "\t", retweets, "\t", likes, "\t", id
 }' targets/$1.csv > targets/$1.txt
 
 # Strips all mentions, RTs, HTML entities, and starting spaces from the output text

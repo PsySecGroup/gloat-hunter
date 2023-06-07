@@ -166,3 +166,7 @@ button {
 canvas {
   height: 50px;
 }
+
+.highest {
+  font-size: 10px;
+}
