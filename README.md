@@ -8,6 +8,8 @@ Everyone be self-snitching these days. Here's a tool that makes finding PII on a
 
 ![image](https://github.com/PsySecGroup/gloat-hunter/assets/76200774/afa933a6-511a-4a1e-a8b2-36f62233c6d4)
 
+![image](https://user-images.githubusercontent.com/76200774/243919355-b1dfc2ec-6169-4d91-bb90-62d1370c93e6.png)
+
 ## Features
 
 * Gathers the last 3,200 tweets of a target
@@ -16,6 +18,7 @@ Everyone be self-snitching these days. Here's a tool that makes finding PII on a
 * Supports queries with quotes for exact match searching
 * Provides an in-browser video chat for investigators to coordinate and collaborate
 * Buttons populated with result counts for common investigative queries
+* Provides line charts of their engagement
 
 ### Coming Soon
 
